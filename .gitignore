@@ -1,9 +1,45 @@
-node_modules
-.env
-dist
-build
-coverage
-.next
-__pycache__
+# Python
+__pycache__/
 *.pyc
-venv
+*.pyo
+
+# Virtual Environment
+venv/
+.env
+
+# Uploaded documents
+uploaded_docs/
+
+# Processed documents
+processed_docs/
+
+# Temporary files
+tmp/
+temp/
+
+# Logs
+logs/
+*.log
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python cache
+.pytest_cache/
+
+# Coverage
+coverage/
+
+# Build
+dist/
+build/
+
+# Node
+node_modules/
+
+# Environment
+.env.local
