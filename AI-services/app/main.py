@@ -1,7 +1,10 @@
 from fastapi import FastAPI
-
-app = FastAPI()
-
+from app.injection.routes import router as injection_router
+app = FastAPI(
+    title="Multi Tanent AI Services",
+    version="1.0.0"
+)
+app.include_router(injection_router)
 
 @app.get("/")
 def read_root():
