@@ -1,13 +1,10 @@
-import fitz
 
-def chunkPdf(file_path:str):
-    doc=fitz.open(file_path)
-    pages=[]
-    for page_number,pages in enumerate(doc):
-        pages.append(
-            {
-                "page_number":page_number,
-                "text":pages.get_text()
-            }
-        )
-    return pages    
+def chunk_pdf(text:str,chunk_size:int=800, overLap:int =100):
+    chunks=[]
+    start=0
+    while(start<len(text)):
+        end=start+chunk_size
+        chunk=text[start:end]
+        chunks.append(chunk)
+        start+=chunk_size-overLap
+    return chunks    
