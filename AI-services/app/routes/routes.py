@@ -3,6 +3,8 @@ import uuid
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from app.injection.chunker import chunk_pdf
 from app.injection.parser import parse_pdf
+from app.vector_store.vector_store import (store_embeddings,create_collection)
+from app.embeddings.embedding import generate_embeddings
 
 router=APIRouter(
     prefix="/injection",
@@ -28,13 +30,27 @@ async def upload_pdf(file:UploadFile=File(...)):
         chunks=chunk_pdf(page["text"])
         for chunk_index,chunk in enumerate(chunks):
             processed_chunks.append({
-                "page":page["page_number"],
-                "chunk_index":chunk_index,
-                "text":chunk
+                "document_id": id,
+
+                "document_name": file.filename,
+
+                "page": page["page_number"],
+
+                "chunk_index": chunk_index,
+
+                "text": chunk
             })
+    embeddings=generate_embeddings(processed_chunks)
+    create_collection()
+    store_embeddings(processed_chunks,embeddings)        
     return {
-        "document_name": file.filename,
-        "total_pages": len(extracted_pages),
-        "total_chunks": len(processed_chunks),
-        "chunks": processed_chunks[:5]
-    }
+
+    "chunks":
+    len(processed_chunks),
+
+    "embeddings":
+    len(embeddings),
+
+    "stored":
+    True
+}
