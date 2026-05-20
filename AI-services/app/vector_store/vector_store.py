@@ -1,5 +1,5 @@
 from qdrant_client import QdrantClient
-
+from app.qdrant_client.client import get_client
 from qdrant_client.models import (
     Distance,
     VectorParams,
@@ -7,9 +7,7 @@ from qdrant_client.models import (
 )
 
 # Local embedded DB
-client = QdrantClient(
-    path="./qdrant_data"
-)
+client = get_client()
 
 COLLECTION = "documents"
 

@@ -5,6 +5,8 @@ from app.injection.chunker import chunk_pdf
 from app.injection.parser import parse_pdf
 from app.vector_store.vector_store import (store_embeddings,create_collection)
 from app.embeddings.embedding import generate_embeddings
+from app.retreaval.search import search
+from app.models.query import SearchRequest
 
 router=APIRouter(
     prefix="/injection",
@@ -54,3 +56,10 @@ async def upload_pdf(file:UploadFile=File(...)):
     "stored":
     True
 }
+@router.post('/search')
+async def sementic_search(body:SearchRequest):
+    results=search(body.query)
+    return{
+        "query":body.query,
+        "result":results
+    }
