@@ -10,6 +10,9 @@ venv/
 # Uploaded documents
 uploaded_docs/
 
+# Qdrant storage
+AI-services/qdrant_data/
+
 # Processed documents
 processed_docs/
 
