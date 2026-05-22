@@ -8,6 +8,7 @@ from app.embeddings.embedding import generate_embeddings
 from app.retrieval.search import sementic_search
 from app.models.query import SearchRequest
 from app.retrieval.bm25_search import build_bm25
+from app.retrieval.hybrid_search import hybrid_search
 
 router=APIRouter(
     prefix="/injection",
@@ -61,6 +62,13 @@ async def upload_pdf(file:UploadFile=File(...)):
 @router.post('/search')
 async def sementic_search(body:SearchRequest):
     results=sementic_search(body.query)
+    return{
+        "query":body.query,
+        "result":results
+    }
+@router.post('/hybrid_search')
+async def hybrid_search(body:SearchRequest):
+    results=hybrid_search(body.query)
     return{
         "query":body.query,
         "result":results
