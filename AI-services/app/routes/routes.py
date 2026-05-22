@@ -9,6 +9,7 @@ from app.retrieval.search import sementic_search
 from app.models.query import SearchRequest
 from app.retrieval.bm25_search import build_bm25
 from app.retrieval.hybrid_search import hybrid_search
+from app.retrieval.final_retrival import final_retrival
 
 router=APIRouter(
     prefix="/injection",
@@ -72,4 +73,11 @@ async def hybrid_search_endpoint(body:SearchRequest):
     return{
         "query":body.query,
         "result":results
+    }
+@router.post('/retrieval')
+async def retrieval_endpoint(body:SearchRequest):
+    result=final_retrival(body.query)
+    return{
+        "query":body.query,
+        "result":result
     }
