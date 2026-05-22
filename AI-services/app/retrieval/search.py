@@ -11,11 +11,16 @@ def sementic_search(query,limit=5):
         limit=limit
     )
     output=[]
-    for result in results:
+    for result in results.points:
+        print(result)
         output.append({
-            "score":result.points.score,
-            "document_id":result.points.payload.get("document_id"),
-            "page":result.points.payload.get("page"),
-            "text":result.points.payload.get("text")
-        })
+            "score":result.score,
+            "document_id":result.payload.get("document_id"),
+            "page":result.payload.get("page"),
+            "text":result.payload.get("text")
+            })
+           
+
+        
+       
     return output

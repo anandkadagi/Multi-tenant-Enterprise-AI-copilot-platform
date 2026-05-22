@@ -60,14 +60,14 @@ async def upload_pdf(file:UploadFile=File(...)):
     True
 }
 @router.post('/search')
-async def sementic_search(body:SearchRequest):
+async def sementic_search_endpoint(body:SearchRequest):
     results=sementic_search(body.query)
     return{
         "query":body.query,
         "result":results
     }
 @router.post('/hybrid_search')
-async def hybrid_search(body:SearchRequest):
+async def hybrid_search_endpoint(body:SearchRequest):
     results=hybrid_search(body.query)
     return{
         "query":body.query,
