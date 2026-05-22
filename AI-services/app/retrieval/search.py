@@ -3,7 +3,7 @@ from app.embeddings.embedding import model
 from app.qdrant_client.client import get_client
 client=get_client()
 collection="documents"
-def search(query,limit=5):
+def sementic_search(query,limit=5):
     query_embedding=model.encode(query,normalize_embeddings=True).tolist()
     results=client.query_points(
         collection_name=collection,
