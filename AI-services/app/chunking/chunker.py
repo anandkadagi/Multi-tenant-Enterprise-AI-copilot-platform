@@ -94,6 +94,11 @@ def chunk_text(
 
             chunk_id += 1
 
+        # If we've reached the end of the text, stop looping to avoid
+        # a case where `start` would not advance (possible infinite loop).
+        if end >= len(text):
+            break
+
         start = (
             end - overlap
         )

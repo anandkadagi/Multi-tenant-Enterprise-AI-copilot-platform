@@ -47,11 +47,21 @@ def store_embeddings(
         len(chunks)
     ):
 
+        embedding_data = embeddings[idx]
+        vector = (
+            embedding_data["embedding"]
+            if isinstance(
+                embedding_data,
+                dict
+            )
+            else embedding_data
+        )
+
         point = PointStruct(
 
             id=idx,
 
-            vector=embeddings[idx],
+            vector=vector,
 
             payload={
 
