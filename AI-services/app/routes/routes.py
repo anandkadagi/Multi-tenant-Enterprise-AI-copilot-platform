@@ -1,8 +1,7 @@
 import os
 import uuid
 from fastapi import APIRouter, UploadFile, File, HTTPException
-from app.injection.chunker import chunk_pdf
-from app.injection.parser import parse_pdf
+from app.chunking.chunker import chunk_text
 from app.vector_store.vector_store import (store_embeddings,create_collection)
 from app.embeddings.embedding import generate_embeddings
 from app.retrieval.search import sementic_search
@@ -38,7 +37,7 @@ async def upload_pdf(file:UploadFile=File(...)):
     print(extracted_pages["pages"])
     processed_chunks=[]
     for page in extracted_pages["pages"]:
-        chunks=chunk_pdf(page["text"])
+        chunks=chunk_text(page["text"])
         for chunk_index,chunk in enumerate(chunks):
             processed_chunks.append({
                 "document_id": id,
