@@ -10,6 +10,7 @@ from app.models.query import SearchRequest
 from app.retrieval.bm25_search import build_bm25
 from app.retrieval.hybrid_search import hybrid_search
 from app.retrieval.final_retrival import final_retrival
+from app.text_extraction.document_text_extraction import load
 
 router=APIRouter(
     prefix="/injection",
@@ -23,15 +24,20 @@ async def upload_pdf(file:UploadFile=File(...)):
     file_path=os.path.join(upload_dir,f"{id}_{file.filename}")
     content=await file.read()
 
+    if not file:
+        raise HTTPException(status_code=400, detail="No file uploaded")
+
     if not content:
         raise HTTPException(status_code=400, detail="Uploaded file is empty")
 
     with open(file_path,"wb") as buffer:
         buffer.write(content)
 
-    extracted_pages=parse_pdf(file_path)
+    # extracted_pages=parse_pdf(file_path)
+    extracted_pages=load(file_path)
+    print(extracted_pages["pages"])
     processed_chunks=[]
-    for page in extracted_pages:
+    for page in extracted_pages["pages"]:
         chunks=chunk_pdf(page["text"])
         for chunk_index,chunk in enumerate(chunks):
             processed_chunks.append({
