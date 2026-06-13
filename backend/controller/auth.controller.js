@@ -1,61 +1,42 @@
-const prisma = require("../config/prisma");
 
-const {
-    hashPassword
-} = require("../utils/password");
 
-const {
-    comparePassword
-} = require("../utils/password");
+const authService = require("../services/auth/auth.service");
 
-const {
-    generateAccessToken
-} = require("../utils/jwt");
+exports.register_company = async (req, res) => {
+
+    try {
+
+        const result =
+            await authService.register_company(req.body);
+
+        return res.status(201).json(result);
+
+    } catch (err) {
+
+        return res.status(400).json({
+            message: err.message
+        });
+
+    }
+
+};
 
 exports.register = async (req, res) => {
+    try {
 
-    const {
-        name,
-        email,
-        password,
-        tenantId
-    } = req.body;
+        const result =
+            await authService.register_user(req.body);
 
-    const existing = await prisma.user.findUnique({
-        where: {
-            email
-        }
-    });
+        return res.status(201).json(result);
 
-    if (existing)
+    } catch (err) {
+
         return res.status(400).json({
-            message: "Email already exists"
+            message: err.message
         });
 
-    const passwordHash =
-        await hashPassword(password);
-
-    const user =
-        await prisma.user.create({
-
-            data: {
-
-                name,
-
-                email,
-
-                passwordHash,
-
-                tenantId,
-
-                role: "EMPLOYEE"
-
-            }
-
-        });
-
-    res.json(user);
-
+    }
+    
 };
 
 

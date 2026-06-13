@@ -1,8 +1,8 @@
 const bcrypt = require("bcrypt");
-const prisma=require('./client')
+const {prisma}=require('./client')
 
 async function main() {
-    const prisma = new PrismaClient();
+    
     const tenant = await prisma.tenant.create({
         data: {
             name: "System",
