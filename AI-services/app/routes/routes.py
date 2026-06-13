@@ -10,11 +10,20 @@ from app.retrieval.bm25_search import build_bm25
 from app.retrieval.hybrid_search import hybrid_search
 from app.retrieval.final_retrival import final_retrival
 from app.text_extraction.document_text_extraction import load
+from app.config.llmConfig import LLM_config
+from app.contextCreation.context import createContext
+from app.prompt.prompt import createPrompt
+from app.LLM.callLLM import call_LLM
+from app.LLM.citation import generate_citations
 
 router=APIRouter(
     prefix="/injection",
     tags=["injection"]
 )
+
+# congiguring LLM
+client=LLM_config()
+
 embedding_generator = EmbeddingGenerator()
 upload_dir="uploaded_docs"
 os.makedirs(upload_dir,exist_ok=True)
@@ -91,4 +100,24 @@ async def retrieval_endpoint(body:SearchRequest):
     return{
         "query":body.query,
         "result":result
+    }
+@router.post('/chat')
+async def chat(body:SearchRequest):
+    result=final_retrival(body.query)
+
+    #context
+    context=createContext(result)
+
+    #prompt
+    prompt=createPrompt(body.query,context)
+
+    #calling LLM
+    answer=call_LLM(client,prompt)
+
+    #citation
+    citations=generate_citations(result)
+
+    return {
+        "answer": answer,
+        "citations": citations
     }
