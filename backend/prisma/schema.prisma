@@ -44,13 +44,17 @@ model User {
   name         String
   email        String   @unique
 
-  passwordHash String
+  passwordHash String?
 
   role         String
 
   isActive     Boolean  @default(true)
 
   refreshTokens RefreshToken[]
+
+  setupToken    String?
+
+  setupExpiry   DateTime?
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
