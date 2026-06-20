@@ -22,6 +22,6 @@ app.use("/api/auth", authRoutes);
 
 app.use("/api/upload", authenticate, rbacMiddleware("Admin"), uploadUsersRoutes);
 
-app.use("/api/setPassword",setPasswordRoutes);
+app.use("/api/setPassword",authenticate, rbacMiddleware("User"), setPasswordRoutes);
 
 module.exports = app;
