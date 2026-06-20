@@ -8,7 +8,7 @@ const uploadUsersRoutes= require("./routes/uploadUsers/upload_users.routes");
 
 const setPasswordRoutes= require("./routes/setPassword/set_password.routes");
 
-const rbacMiddleware= require("./middleware/auth.middleware");
+const rbacMiddleware= require("./middleware/rbac.middleware");
 
 const authenticate= require("./middleware/auth.middleware");
 
@@ -20,7 +20,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 
-app.use("/api/upload", authenticate, rbacMiddleware("Admin"), uploadUsersRoutes);
+app.use("/api/upload", authenticate, rbacMiddleware("TENANT_ADMIN"), uploadUsersRoutes);
 
 app.use("/api/setPassword",authenticate, rbacMiddleware("User"), setPasswordRoutes);
 

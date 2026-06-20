@@ -6,7 +6,7 @@ exports.bulk_register=async(req,res)=>{
            const result =
             await uploadUsers.bulk_register_service({
         filePath: req.file.path,
-        tenantId: "c1a7c4bb-44a7-4251-a3f7-5810f4843db5"
+        tenantId: req.user.tenantId
       });
 
         return res.status(201).json(result); 
