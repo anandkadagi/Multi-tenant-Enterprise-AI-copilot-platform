@@ -106,6 +106,7 @@
 
 
 from qdrant_client import QdrantClient
+from app.qdrant_client.client import get_client
 from qdrant_client.models import (
     Distance, VectorParams, PointStruct,
     Filter, FieldCondition, MatchValue,
@@ -113,7 +114,7 @@ from qdrant_client.models import (
 )
 import uuid
 
-client = QdrantClient(host="localhost", port=6333)  # adjust to your setup
+client = get_client()  
 COLLECTION_NAME = "documents"
 
 def create_collection():

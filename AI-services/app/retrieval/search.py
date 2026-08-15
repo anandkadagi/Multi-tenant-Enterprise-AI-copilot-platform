@@ -33,9 +33,9 @@ from app.embeddings.embedding import EmbeddingGenerator
 
 embedding_generator = EmbeddingGenerator()
 
-def sementic_search(query, company_id, top_k=5):
-    query_vector = embedding_generator.generate_embeddings([{"text": query}])[0]
-
+def sementic_search(query, company_id, top_k):
+    # query_vector = embedding_generator.generate_embeddings([{"text": query}])[0]
+    query_vector = embedding_generator.generate_embeddings([{"text": query}])[0]["embedding"]
     results = client.query_points(
         collection_name=COLLECTION_NAME,
         query=query_vector,
@@ -54,10 +54,10 @@ def sementic_search(query, company_id, top_k=5):
         {
             "text": r.payload["text"],
             "document_id": r.payload["document_id"],
-            "document_name": r.payload["document_name"],
+            # "document_name": r.payload["document_name"],
             "page": r.payload["page"],
             "chunk_index": r.payload["chunk_index"],
             "score": r.score
         }
-        for r in results
+        for r in results.points
     ]

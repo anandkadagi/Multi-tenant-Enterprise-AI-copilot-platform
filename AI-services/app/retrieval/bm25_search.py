@@ -50,7 +50,7 @@ def build_bm25(chunks, company_id):
     with open(path, "wb") as f:
         pickle.dump({"bm25": bm25, "chunks": all_chunks}, f)
 
-def bm25_search(query, company_id, top_k=5):
+def bm25_search(query, company_id, top_k):
     path = _index_path(company_id)
     if not os.path.exists(path):
         return []  # this company has no documents yet

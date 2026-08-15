@@ -23,7 +23,7 @@ const axios = require("axios")
 exports.send_query_controller = async (req, res) => {
     try {
         const { query } = req.body;
-        const { id: userId, companyId } = req.user; 
+        const { id: userId, tenantId } = req.user; 
 
         if (!query) {
             return res.status(400).json({ message: "query is required" });
@@ -33,7 +33,7 @@ exports.send_query_controller = async (req, res) => {
             "http://localhost:8000/injection/chat",
             {
                 query,
-                companyId,
+                tenantId,
                 userId
             }
         );

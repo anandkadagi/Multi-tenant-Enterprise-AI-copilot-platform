@@ -17,8 +17,8 @@ from app.retrieval.search import sementic_search
 from app.retrieval.bm25_search import bm25_search
 
 def hybrid_search(query, company_id, top_k=5, alpha=0.5):
-    semantic_results = sementic_search(query, company_id, top_k=top_k)
-    keyword_results = bm25_search(query, company_id, top_k=top_k)
+    semantic_results = sementic_search(query, company_id, top_k)
+    keyword_results = bm25_search(query, company_id, top_k)
 
     # simple merge by document_id+chunk_index, weighted score combo
     combined = {}

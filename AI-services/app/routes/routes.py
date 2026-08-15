@@ -216,7 +216,7 @@ async def upload_pdf(
 
 @router.post('/chat')
 async def chat(body: SearchRequest):
-    result = final_retrival(body.query, body.companyId)
+    result = final_retrival(body.query, body.tenantId)
     context = createContext(result)
     prompt = createPrompt(body.query, context)
     answer = call_LLM(client, prompt)
