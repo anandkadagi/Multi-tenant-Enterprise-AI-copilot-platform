@@ -36,9 +36,9 @@ embedding_generator = EmbeddingGenerator()
 def sementic_search(query, company_id, top_k=5):
     query_vector = embedding_generator.generate_embeddings([{"text": query}])[0]
 
-    results = client.search(
+    results = client.query_points(
         collection_name=COLLECTION_NAME,
-        query_vector=query_vector,
+        query=query_vector,
         query_filter=Filter(
             must=[
                 FieldCondition(
