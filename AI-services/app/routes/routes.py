@@ -186,7 +186,7 @@ async def upload_pdf(
     embeddings = embedding_generator.generate_embeddings(processed_chunks)
 
     create_collection()
-    store_embeddings(processed_chunks, embeddings)
+    store_embeddings(processed_chunks, embeddings, companyId)
     build_bm25(processed_chunks, companyId)
 
     return {
