@@ -1,8 +1,135 @@
+# import os
+# import uuid
+# from fastapi import APIRouter, UploadFile, File, HTTPException
+# from app.chunking.chunker import chunk_text
+# from app.vector_store.vector_store import (store_embeddings,create_collection)
+# from app.embeddings.embedding import EmbeddingGenerator
+# from app.retrieval.search import sementic_search
+# from app.models.query import SearchRequest
+# from app.retrieval.bm25_search import build_bm25
+# from app.retrieval.hybrid_search import hybrid_search
+# from app.retrieval.final_retrival import final_retrival
+# from app.text_extraction.document_text_extraction import load
+# from app.config.llmConfig import LLM_config
+# from app.contextCreation.context import createContext
+# from app.prompt.prompt import createPrompt
+# from app.LLM.callLLM import call_LLM
+# from app.LLM.citation import generate_citations
+
+# router=APIRouter(
+#     prefix="/injection",
+#     tags=["injection"]
+# )
+
+# # congiguring LLM
+# client=LLM_config()
+
+# embedding_generator = EmbeddingGenerator()
+# upload_dir="uploaded_docs"
+# os.makedirs(upload_dir,exist_ok=True)
+# @router.post("/upload")
+# async def upload_pdf(file:UploadFile=File(...)):
+#     id=uuid.uuid4()
+#     file_path=os.path.join(upload_dir,f"{id}_{file.filename}")
+#     content=await file.read()
+
+#     if not file:
+#         raise HTTPException(status_code=400, detail="No file uploaded")
+
+#     if not content:
+#         raise HTTPException(status_code=400, detail="Uploaded file is empty")
+
+#     with open(file_path,"wb") as buffer:
+#         buffer.write(content)
+
+#     # extracted_pages=parse_pdf(file_path)
+#     extracted_pages=load(file_path)
+    
+#     processed_chunks=[]
+#     for page in extracted_pages["pages"]:
+#         chunks=chunk_text(page["text"])
+#         for chunk_index,chunk in enumerate(chunks):
+#             processed_chunks.append({
+#                 "document_id": id,
+
+#                 "document_name": file.filename,
+
+#                 "page": page["page_number"],
+
+#                 "chunk_index": chunk_index,
+
+#                 "text": chunk["text"]
+#             })
+    
+#     embeddings = embedding_generator.generate_embeddings(processed_chunks)
+    
+#     create_collection()
+    
+#     store_embeddings(processed_chunks,embeddings)  
+    
+#     build_bm25(processed_chunks)
+         
+#     return {
+
+#     "chunks":
+#     len(processed_chunks),
+
+#     "embeddings":
+#     len(embeddings),
+
+#     "stored":
+#     True
+# }
+# @router.post('/search')
+# async def sementic_search_endpoint(body:SearchRequest):
+#     results=sementic_search(body.query)
+#     return{
+#         "query":body.query,
+#         "result":results
+#     }
+# @router.post('/hybrid_search')
+# async def hybrid_search_endpoint(body:SearchRequest):
+#     results=hybrid_search(body.query)
+#     return{
+#         "query":body.query,
+#         "result":results
+#     }
+# @router.post('/retrieval')
+# async def retrieval_endpoint(body:SearchRequest):
+#     result=final_retrival(body.query)
+#     return{
+#         "query":body.query,
+#         "result":result
+#     }
+# @router.post('/chat')
+# async def chat(body:SearchRequest):
+#     result=final_retrival(body.query)
+
+#     #context
+#     context=createContext(result)
+
+#     #prompt
+#     prompt=createPrompt(body.query,context)
+
+#     #calling LLM
+#     answer=call_LLM(client,prompt)
+
+#     #citation
+#     citations=generate_citations(result)
+
+#     return {
+#         "answer": answer,
+#         "citations": citations
+#     }
+
+
+
+from fastapi import APIRouter, UploadFile, File, HTTPException, Form
 import os
 import uuid
-from fastapi import APIRouter, UploadFile, File, HTTPException
+
 from app.chunking.chunker import chunk_text
-from app.vector_store.vector_store import (store_embeddings,create_collection)
+from app.vector_store.vector_store import store_embeddings, create_collection
 from app.embeddings.embedding import EmbeddingGenerator
 from app.retrieval.search import sementic_search
 from app.models.query import SearchRequest
@@ -16,106 +143,84 @@ from app.prompt.prompt import createPrompt
 from app.LLM.callLLM import call_LLM
 from app.LLM.citation import generate_citations
 
-router=APIRouter(
-    prefix="/injection",
-    tags=["injection"]
-)
+router = APIRouter(prefix="/injection", tags=["injection"])
 
-# congiguring LLM
-client=LLM_config()
-
+client = LLM_config()
 embedding_generator = EmbeddingGenerator()
-upload_dir="uploaded_docs"
-os.makedirs(upload_dir,exist_ok=True)
+upload_dir = "uploaded_docs"
+os.makedirs(upload_dir, exist_ok=True)
+
+
 @router.post("/upload")
-async def upload_pdf(file:UploadFile=File(...)):
-    id=uuid.uuid4()
-    file_path=os.path.join(upload_dir,f"{id}_{file.filename}")
-    content=await file.read()
+async def upload_pdf(
+    file: UploadFile = File(...),
+    companyId: str = Form(...)
+):
+    id = uuid.uuid4()
+    file_path = os.path.join(upload_dir, f"{id}_{file.filename}")
+    content = await file.read()
 
     if not file:
         raise HTTPException(status_code=400, detail="No file uploaded")
-
     if not content:
         raise HTTPException(status_code=400, detail="Uploaded file is empty")
 
-    with open(file_path,"wb") as buffer:
+    with open(file_path, "wb") as buffer:
         buffer.write(content)
 
-    # extracted_pages=parse_pdf(file_path)
-    extracted_pages=load(file_path)
-    
-    processed_chunks=[]
+    extracted_pages = load(file_path)
+
+    processed_chunks = []
     for page in extracted_pages["pages"]:
-        chunks=chunk_text(page["text"])
-        for chunk_index,chunk in enumerate(chunks):
+        chunks = chunk_text(page["text"])
+        for chunk_index, chunk in enumerate(chunks):
             processed_chunks.append({
-                "document_id": id,
-
+                "document_id": str(id),
                 "document_name": file.filename,
-
+                "company_id": companyId,
                 "page": page["page_number"],
-
                 "chunk_index": chunk_index,
-
                 "text": chunk["text"]
             })
-    
+
     embeddings = embedding_generator.generate_embeddings(processed_chunks)
-    
+
     create_collection()
-    
-    store_embeddings(processed_chunks,embeddings)  
-    
-    build_bm25(processed_chunks)
-         
+    store_embeddings(processed_chunks, embeddings)
+    build_bm25(processed_chunks, companyId)
+
     return {
-
-    "chunks":
-    len(processed_chunks),
-
-    "embeddings":
-    len(embeddings),
-
-    "stored":
-    True
-}
-@router.post('/search')
-async def sementic_search_endpoint(body:SearchRequest):
-    results=sementic_search(body.query)
-    return{
-        "query":body.query,
-        "result":results
+        "chunks": len(processed_chunks),
+        "embeddings": len(embeddings),
+        "stored": True
     }
-@router.post('/hybrid_search')
-async def hybrid_search_endpoint(body:SearchRequest):
-    results=hybrid_search(body.query)
-    return{
-        "query":body.query,
-        "result":results
-    }
-@router.post('/retrieval')
-async def retrieval_endpoint(body:SearchRequest):
-    result=final_retrival(body.query)
-    return{
-        "query":body.query,
-        "result":result
-    }
+
+
+# @router.post('/search')
+# async def sementic_search_endpoint(body: SearchRequest):
+#     results = sementic_search(body.query, body.companyId)
+#     return {"query": body.query, "result": results}
+
+
+# @router.post('/hybrid_search')
+# async def hybrid_search_endpoint(body: SearchRequest):
+#     results = hybrid_search(body.query, body.companyId)
+#     return {"query": body.query, "result": results}
+
+
+# @router.post('/retrieval')
+# async def retrieval_endpoint(body: SearchRequest):
+#     result = final_retrival(body.query, body.companyId)
+#     return {"query": body.query, "result": result}
+
+
 @router.post('/chat')
-async def chat(body:SearchRequest):
-    result=final_retrival(body.query)
-
-    #context
-    context=createContext(result)
-
-    #prompt
-    prompt=createPrompt(body.query,context)
-
-    #calling LLM
-    answer=call_LLM(client,prompt)
-
-    #citation
-    citations=generate_citations(result)
+async def chat(body: SearchRequest):
+    result = final_retrival(body.query, body.companyId)
+    context = createContext(result)
+    prompt = createPrompt(body.query, context)
+    answer = call_LLM(client, prompt)
+    citations = generate_citations(result)
 
     return {
         "answer": answer,
