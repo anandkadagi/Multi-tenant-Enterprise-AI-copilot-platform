@@ -54,7 +54,6 @@ def sementic_search(query, company_id, top_k):
         {
             "text": r.payload["text"],
             "document_id": r.payload["document_id"],
-            # "document_name": r.payload["document_name"],
             "page": r.payload["page"],
             "chunk_index": r.payload["chunk_index"],
             "score": r.score
