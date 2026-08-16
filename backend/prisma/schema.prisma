@@ -7,79 +7,86 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Tenant {
-  id        String   @id @default(uuid())
-  name      String
-  slug      String   @unique
-
-  users         User[]
-  subscription  Subscription?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String        @id @default(uuid())
+  name         String
+  slug         String        @unique
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  subscription Subscription?
+  users        User[]
 }
 
 model Subscription {
-  id        String @id @default(uuid())
-
-  tenantId  String @unique
-  tenant    Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-
+  id        String   @id @default(uuid())
+  tenantId  String   @unique
   plan      String
   status    String
-
   startsAt  DateTime
   expiresAt DateTime
-
   createdAt DateTime @default(now())
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
 model User {
-  id           String   @id @default(uuid())
-
-  tenantId     String
-  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-
-  name         String
-  email        String   @unique
-
-  passwordHash String?
-
-  role         String
-
-  isActive     Boolean  @default(true)
-
-  refreshTokens RefreshToken[]
-
-  setupToken    String?
-
+  id            String         @id @default(uuid())
+  tenantId      String
+  name          String
+  email         String         @unique
+  passwordHash  String?
+  role          String
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   setupExpiry   DateTime?
-
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  setupToken    String?
+  refreshTokens RefreshToken[]
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([role])
-
   @@map("users")
 }
 
 model RefreshToken {
-  id         String   @id @default(uuid())
-
-  token      String   @unique
-
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  expiresAt   DateTime
-
-  revoked     Boolean  @default(false)
-
-  createdAt   DateTime @default(now())
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
-
   @@map("refresh_tokens")
+}
+
+model Conversation {
+  id        String                @id @default(uuid())
+  companyId String
+  userId    String
+  createdAt DateTime              @default(now())
+  messages  ConversationMessage[]
+
+  @@index([userId, companyId])
+  @@index([createdAt])
+  @@map("conversations")
+}
+
+model ConversationMessage {
+  id             String       @id @default(uuid())
+  conversationId String
+  role           Role
+  content        String
+  createdAt      DateTime     @default(now())
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+  @@map("conversation_messages")
+}
+
+enum Role {
+  user
+  assistant
 }

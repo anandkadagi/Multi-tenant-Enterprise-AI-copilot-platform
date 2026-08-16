@@ -1,0 +1,3 @@
+ALTER TABLE "users" ADD COLUMN "setupToken" TEXT;
+ALTER TABLE "users" ADD COLUMN "setupExpiry" TIMESTAMP(3);
+ALTER TABLE "users" ALTER COLUMN "passwordHash" DROP NOT NULL;

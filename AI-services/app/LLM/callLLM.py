@@ -11,10 +11,13 @@ def call_LLM(client,prompt):
             "role": "user",
             "content": prompt
         }
-        ]
+        ],
+        stream=True 
     )
 
-    answer = response.choices[0].message.content
-    return answer
-
+    
+    for chunk in response:
+        delta = chunk.choices[0].delta.content
+        if delta:
+            yield delta
 

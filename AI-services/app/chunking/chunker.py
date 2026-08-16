@@ -1,13 +1,4 @@
-
-# def chunk_pdf(text:str,chunk_size:int=800, overLap:int =100):
-#     chunks=[]
-#     start=0
-#     while(start<len(text)):
-#         end=start+chunk_size
-#         chunk=text[start:end]
-#         chunks.append(chunk)
-#         start+=chunk_size-overLap
-#     return chunks    
+   
 from typing import List, Dict
 
 
@@ -94,8 +85,7 @@ def chunk_text(
 
             chunk_id += 1
 
-        # If we've reached the end of the text, stop looping to avoid
-        # a case where `start` would not advance (possible infinite loop).
+    
         if end >= len(text):
             break
 
