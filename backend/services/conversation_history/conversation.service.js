@@ -1,26 +1,23 @@
 const prisma = new PrismaClient();
 const {prisma}=require('../../prisma/client')
 const MAX_TURNS = 10;
+const CONVERSATION_TTL_HOURS = 24;
 
-exports.ensureConversation = async (conversationId, userId, companyId) => {
-    await prisma.conversation.upsert({
-        where: { id: conversationId },
-        update: {},
-        create: {
-            id: conversationId,
-            userId,
-            companyId
-        }
+const getCutoffTime = () => new Date(Date.now() - CONVERSATION_TTL_HOURS * 60 * 60 * 1000);
+
+exports.createConversation = async (userId, companyId) => {
+    return prisma.conversation.create({
+        data: { userId, companyId }
     });
 };
 
 exports.getHistory = async (conversationId, userId, companyId) => {
-    
     const conversation = await prisma.conversation.findFirst({
         where: {
             id: conversationId,
             userId,
-            companyId
+            companyId,
+            createdAt: { gte: getCutoffTime() }
         },
         include: {
             messages: {
@@ -40,10 +37,25 @@ exports.getHistory = async (conversationId, userId, companyId) => {
 
 exports.appendMessage = async (conversationId, role, content) => {
     await prisma.conversationMessage.create({
-        data: {
-            conversationId,
-            role,
-            content
-        }
+        data: { conversationId, role, content }
     });
+};
+
+exports.listActiveConversations = async (userId, companyId) => {
+    return prisma.conversation.findMany({
+        where: {
+            userId,
+            companyId,
+            createdAt: { gte: getCutoffTime() }
+        },
+        orderBy: { createdAt: "desc" }
+    });
+};
+
+exports.deleteExpiredConversations = async () => {
+    const result = await prisma.conversation.deleteMany({
+        where: { createdAt: { lt: getCutoffTime() } }
+    });
+    console.log(`Deleted ${result.count} expired conversations`);
+    return result.count;
 };
