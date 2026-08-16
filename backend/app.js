@@ -14,6 +14,8 @@ const rbacMiddleware= require("./middleware/rbac.middleware");
 
 const authenticate= require("./middleware/auth.middleware");
 
+const conversationRoutes=require("./routes/conversation_history/conversation.routes")
+
 
 const app = express();
 
@@ -28,5 +30,7 @@ app.use("/api/upload", authenticate, rbacMiddleware("TENANT_ADMIN"), uploadUsers
 app.use("/api/setPassword",authenticate, rbacMiddleware("User"), setPasswordRoutes);
 
 app.use("/api/query",authenticate,rbacMiddleware("SUPER_ADMIN","TENANT_ADMIN","User"), queryRoutes);
+
+app.use("/api/conversation", authenticate,rbacMiddleware("SUPER_ADMIN","TENANT_ADMIN","User"), conversationRoutes);
 
 module.exports = app;
