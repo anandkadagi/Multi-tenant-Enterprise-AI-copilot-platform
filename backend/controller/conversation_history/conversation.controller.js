@@ -1,9 +1,9 @@
 const axios = require("axios");
-const conversationService = require("../services/conversation/conversation.service");
+const conversationService = require("../../services/conversation_history/conversation.service");
 
 exports.createConversation = async (req, res) => {
     try {
-        const { id:userId, tenantId } = req.user;
+        const { userId, tenantId } = req.user;
         const conversation = await conversationService.createConversation(userId, tenantId);
         return res.json({ conversationId: conversation.id });
     } catch (error) {

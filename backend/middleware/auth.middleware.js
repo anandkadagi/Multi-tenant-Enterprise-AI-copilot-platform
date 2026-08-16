@@ -17,7 +17,7 @@ module.exports = (req, res, next) => {
             token,
             process.env.JWT_SECRET
         );
-
+        
         next();
 
     } catch {

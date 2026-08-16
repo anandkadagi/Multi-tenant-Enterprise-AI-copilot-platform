@@ -1,4 +1,4 @@
-const prisma = new PrismaClient();
+
 const {prisma}=require('../../prisma/client')
 const MAX_TURNS = 10;
 const CONVERSATION_TTL_HOURS = 24;
@@ -6,9 +6,14 @@ const CONVERSATION_TTL_HOURS = 24;
 const getCutoffTime = () => new Date(Date.now() - CONVERSATION_TTL_HOURS * 60 * 60 * 1000);
 
 exports.createConversation = async (userId, companyId) => {
-    return prisma.conversation.create({
+    try{
+        return prisma.conversation.create({
         data: { userId, companyId }
     });
+    }catch(error){
+        throw new Error(error.message || "Error in create conversation");
+    }
+    
 };
 
 exports.getHistory = async (conversationId, userId, companyId) => {
