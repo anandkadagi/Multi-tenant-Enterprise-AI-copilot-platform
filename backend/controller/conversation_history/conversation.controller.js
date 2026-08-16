@@ -44,9 +44,9 @@ exports.sendMessage = async (req, res) => {
 exports.getMessages = async (req, res) => {
     try {
         const { id: conversationId } = req.params;
-        const { id: userId, companyId } = req.user;
+        const { id: userId, tenantId } = req.user;
 
-        const history = await conversationService.getHistory(conversationId, userId, companyId);
+        const history = await conversationService.getHistory(conversationId, userId, tenantId);
         return res.json({ messages: history });
     } catch (error) {
         return res.status(500).json({ message: error.message });
@@ -55,8 +55,8 @@ exports.getMessages = async (req, res) => {
 
 exports.listConversations = async (req, res) => {
     try {
-        const { id: userId, companyId } = req.user;
-        const conversations = await conversationService.listActiveConversations(userId, companyId);
+        const { id: userId, tenantId } = req.user;
+        const conversations = await conversationService.listActiveConversations(userId, tenantId);
         return res.json({ conversations });
     } catch (error) {
         return res.status(500).json({ message: error.message });
