@@ -1,6 +1,8 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException, Form
 import os
 import uuid
+from fastapi.responses import StreamingResponse
+import json
 
 from app.chunking.chunker import chunk_text
 from app.vector_store.vector_store import store_embeddings, create_collection
@@ -93,10 +95,17 @@ async def chat(body: SearchRequest):
     result = final_retrival(body.query, body.tenantId)
     context = createContext(result)
     prompt = createPrompt(body.query, context)
-    answer = call_LLM(client, prompt)
+    # answer = call_LLM(client, prompt)
     citations = generate_citations(result)
 
-    return {
-        "answer": answer,
-        "citations": citations
-    }
+    # return {
+    #     "answer": answer,
+    #     "citations": citations
+    # }
+    def event_stream():
+        for chunk in call_LLM(client, prompt):
+            yield chunk
+        # after all text is streamed, send citations as a final marker
+        yield f"\n__CITATIONS__{json.dumps(citations)}"
+
+    return StreamingResponse(event_stream(), media_type="text/plain")

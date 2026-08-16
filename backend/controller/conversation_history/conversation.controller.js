@@ -28,14 +28,50 @@ exports.sendMessage = async (req, res) => {
             tenantId,
             userId,
             history
+        },{ responseType: "stream" });
+
+        res.setHeader("Content-Type", "text/plain");
+        res.setHeader("Transfer-Encoding", "chunked");
+
+        let fullAnswer = "";
+        let citations = [];
+
+        // const { answer, citations } = response.data;
+
+        // await conversationService.appendMessage(conversationId, "user", query);
+        // await conversationService.appendMessage(conversationId, "assistant", answer);
+
+        // return res.json({ answer, citations });
+
+        response.data.on("data", (chunk) => {
+            const text = chunk.toString();
+            if (text.includes("__CITATIONS__")) {
+                // split the answer text from the citations marker
+                const [answerPart, citationsPart] = text.split("__CITATIONS__");
+                if (answerPart) {
+                    fullAnswer += answerPart;
+                    res.write(answerPart);   // forward remaining answer text to client
+                }
+                citations = JSON.parse(citationsPart);
+                // don't forward the raw marker/JSON to the client
+            } else {
+                fullAnswer += text;
+                res.write(text);   // forward this chunk to the client immediately
+            }
         });
 
-        const { answer, citations } = response.data;
+        response.data.on("end", async () => {
+            // save the complete answer to DB now that streaming is done
+            await conversationService.appendMessage(conversationId, "user", query);
+            await conversationService.appendMessage(conversationId, "assistant", fullAnswer);
+            res.write(`\n\n__CITATIONS__${JSON.stringify(citations)}`);  
+            res.end();   // close the response to the client
+        });
 
-        await conversationService.appendMessage(conversationId, "user", query);
-        await conversationService.appendMessage(conversationId, "assistant", answer);
-
-        return res.json({ answer, citations });
+        response.data.on("error", (err) => {
+            console.error("Stream error:", err);
+            res.end();
+        });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
