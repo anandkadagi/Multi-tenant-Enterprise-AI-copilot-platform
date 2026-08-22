@@ -62,7 +62,13 @@ exports.listActiveConversations = async (userId, companyId) => {
             companyId,
             createdAt: { gte: getCutoffTime() }
         },
-        orderBy: { createdAt: "desc" }
+        orderBy: { createdAt: "desc" },
+        include: {
+                messages: {
+                    orderBy: { createdAt: "desc" },
+                    take: 1   // only the most recent message
+                }
+            }
     });
 }catch(error){
         throw new Error(error.message || "Error in List conversation");

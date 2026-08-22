@@ -27,3 +27,15 @@ export interface ChatMessage {
 export interface ConversationResponse {
     conversationId: string;
 }
+
+export interface ConversationSummary {
+    id: string;
+    userId: string;
+    companyId: string;
+    createdAt: string;
+    messages: [];
+}
+
+export interface MessagesResponse {
+    messages: Array<{ role: "user" | "assistant"; content: string }>;
+}
