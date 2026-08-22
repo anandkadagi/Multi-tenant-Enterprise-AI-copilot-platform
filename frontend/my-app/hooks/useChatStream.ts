@@ -27,7 +27,7 @@ export function useChatStream() {
             let activeConversationId = conversationId;
 
             if (!activeConversationId) {
-                const data = await apiClient.post<ConversationResponse>("/conversations");
+                const data = await apiClient.post<ConversationResponse>("/api/conversation/conversations");
                 activeConversationId = data.conversationId;
                 setConversationId(activeConversationId);
             }
@@ -44,7 +44,7 @@ export function useChatStream() {
 
             try {
                 const response = await fetch(
-                    `${API_URL}/conversations/${activeConversationId}/messages`,
+                    `${API_URL}/api/conversation/conversations/${activeConversationId}/messages`,
                     {
                         method: "POST",
                         headers: {
