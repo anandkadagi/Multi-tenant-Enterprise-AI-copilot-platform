@@ -17,9 +17,11 @@ export interface Citation {
 }
 
 export interface ChatMessage {
+    id: string;
     role: "user" | "assistant";
     content: string;
     citations?: Citation[];
+    isStreaming?: boolean;
 }
 
 export interface ConversationResponse {
