@@ -90,3 +90,16 @@ enum Role {
   user
   assistant
 }
+
+model Document {
+  id         String   @id @default(uuid())
+  tenantId   String
+  name       String
+  uploadedBy String
+  chunks     Int      @default(0)
+  status     String   @default("processed")
+  createdAt  DateTime @default(now())
+
+  @@index([tenantId, createdAt])
+  @@map("documents")
+}

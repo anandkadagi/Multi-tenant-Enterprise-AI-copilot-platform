@@ -9,13 +9,19 @@ export default function Home() {
 
     useEffect(() => {
         if (!isLoading) {
-            router.push(user ? "/chat" : "/login");
+            if (!user) {
+                router.push("/login");
+            } else if (user.role === "TENANT_ADMIN") {
+                router.push("/admin/documents");
+            } else {
+                router.push("/chat");
+            }
         }
     }, [isLoading, user, router]);
 
     return (
-        <div className="flex flex-1 items-center justify-center bg-zinc-50 dark:bg-black">
-            <p className="text-zinc-500 dark:text-zinc-400">Loading...</p>
+        <div className="flex flex-1 items-center justify-center bg-base">
+            <p className="text-sm text-muted">Loading...</p>
         </div>
     );
 }
