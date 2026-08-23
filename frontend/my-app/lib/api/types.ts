@@ -39,3 +39,24 @@ export interface ConversationSummary {
 export interface MessagesResponse {
     messages: Array<{ role: "user" | "assistant"; content: string }>;
 }
+
+export interface DocumentUploadResult {
+    chunks: number;
+    embeddings: number;
+    stored: boolean;
+}
+
+export interface BulkEmployeeResult {
+    inserted: number;
+    failed: Array<{ email: string; reason: string }>;
+}
+
+export interface DocumentRecord {
+    id: string;
+    tenantId: string;
+    name: string;
+    uploadedBy: string;
+    chunks: number;
+    status: string;
+    createdAt: string;
+}

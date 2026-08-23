@@ -81,6 +81,7 @@ import { useChatStream } from "@/hooks/useChatStream";
 import { ChatMessageBubble } from "@/components/ChatMessageBubble";
 import { ChatInput } from "@/components/ChatInput";
 import { ConversationSidebar } from "@/components/ConversationSidebar";
+import Link from "next/link";
 
 export default function ChatPage() {
     const { user, logout } = useAuth();
@@ -116,6 +117,14 @@ export default function ChatPage() {
                         <h1 className="font-display text-base font-semibold text-white">Copilot</h1>
                     </div>
                     <div className="flex items-center gap-3">
+                        {user?.role === "TENANT_ADMIN" && (
+                            <Link
+                                href="/admin/documents"
+                                className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-200 transition hover:bg-white/5"
+                            >
+                                Admin
+                            </Link>
+                        )}
                         <span className="text-xs text-muted">{user?.email}</span>
                         <button
                             onClick={logout}

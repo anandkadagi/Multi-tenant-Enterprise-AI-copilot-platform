@@ -1,9 +1,10 @@
 const axios = require("axios");
 const FormData = require("form-data");
+const uploadDocServices=require("../../services/uploadDocs/upload_docs.services")
 
 exports.uploadDocument = async (req, res) => {
     try {
-        const { tenantId } = req.user;
+        const { userId,tenantId } = req.user;
         const file = req.file;
 
         if (!file) {
@@ -20,7 +21,20 @@ exports.uploadDocument = async (req, res) => {
             { headers: form.getHeaders() }
         );
 
+        uploadDocServices.saveDocs({userId, tenantId, file, response})
+
         return res.json(response.data);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+
+exports.listDocuments = async (req, res) => {
+    try {
+        const { tenantId } = req.user;
+        const documents = await uploadDocServices.listDocuments({tenantId});
+        return res.json({ documents });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }

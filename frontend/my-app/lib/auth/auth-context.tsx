@@ -39,12 +39,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsLoading(false);
     }, []);
 
-    const login = (token: string) => {
-        localStorage.setItem("token", token);
-        const payload = decodeToken(token);
-        setUser(payload);
+   const login = (token: string) => {
+    localStorage.setItem("token", token);
+    const payload = decodeToken(token);
+    setUser(payload);
+    if (payload?.role === "TENANT_ADMIN") {
+        router.push("/admin/documents");
+    } else {
         router.push("/chat");
-    };
+    }
+};
 
     const logout = () => {
         localStorage.removeItem("token");
