@@ -2,12 +2,14 @@
 import { useState, useRef } from "react";
 import { apiClient, ApiError } from "@/lib/api/client";
 import type { BulkEmployeeResult } from "@/lib/api/types";
+import { Modal } from "@/components/Modal";
 
 export default function EmployeesPage() {
     const [isUploading, setIsUploading] = useState(false);
     const [result, setResult] = useState<BulkEmployeeResult | null>(null);
     const [error, setError] = useState("");
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [showModal, setShowModal] = useState(false);
 
     const handleUpload = async (file: File) => {
         setError("");
@@ -23,6 +25,7 @@ export default function EmployeesPage() {
                 formData
             );
             setResult(data);
+            setShowModal(true)
         } catch (err) {
             setError(err instanceof ApiError ? err.message : "Upload failed");
         } finally {
@@ -74,7 +77,7 @@ export default function EmployeesPage() {
                     </div>
                 )}
 
-                {result && (
+                {/* {result && (
                     <div className="mt-4 space-y-3">
                         <div className="rounded-lg border border-accent-soft/20 bg-accent-soft/10 px-4 py-3 text-sm text-slate-200">
                             <span className="font-medium text-white">{result.inserted}</span> employees invited successfully
@@ -96,7 +99,24 @@ export default function EmployeesPage() {
                             </div>
                         )}
                     </div>
-                )}
+                )} */}
+
+                <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+                <div className="flex flex-col items-center text-center">
+                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent-soft/15">
+                        <span className="h-3 w-3 rounded-full bg-accent-soft" />
+                    </div>
+                    <h2 className="font-display text-lg font-semibold text-white">
+                        Users uploaded
+                    </h2>
+                    <button
+                        onClick={() => setShowModal(false)}
+                        className="mt-6 w-full rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-white transition hover:bg-accent/90"
+                    >
+                        OK
+                    </button>
+                </div>
+            </Modal>
             </div>
         </div>
     );
