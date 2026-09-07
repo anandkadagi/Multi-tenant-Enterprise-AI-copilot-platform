@@ -4,6 +4,8 @@ const XLSX = require("xlsx");
 
 const crypto = require("crypto");
 
+const bcrypt=require("bcrypt")
+
 const {
     generateAccessToken
 } = require("../../utils/generateJWT");
@@ -29,59 +31,64 @@ exports.bulk_register_service=async({filePath,tenantId})=>{
 
   for (const row of rows) {
 
-    const email =
-      row.Email?.trim().toLowerCase();
+            const email = row.Email?.trim().toLowerCase();
+            const password = row.Password?.toString().trim();
 
-    const existing =
-      await prisma.user.findUnique({
-        where: { email }
-      });
+            if (!email) {
+                failed.push({ email: email || "(missing)", reason: "Missing email" });
+                continue;
+            }
 
-    if (existing) {
+            if (!password) {
+                failed.push({ email, reason: "Missing password" });
+                continue;
+            }
 
-      failed.push({
-        email,
-        reason: "Already Exists"
-      });
+            const existing = await prisma.user.findUnique({ where: { email } });
 
-      continue;
-    }
+            if (existing) {
+                failed.push({ email, reason: "Already Exists" });
+                continue;
+            }
 
-    const token =
-      crypto.randomBytes(32)
-      .toString("hex");
+            const passwordHash = await bcrypt.hash(password, 10);
 
-    const employee =
-      await prisma.user.create({
+    // const employee =
+    //   await prisma.user.create({
 
-        data: {
+    //     data: {
 
-          tenantId,
+    //       tenantId,
 
-          name: row.Name,
+    //       name: row.Name,
 
-          email,
+    //       email,
 
-          role:
-            row.Role || "User",
+    //       role:
+    //         row.Role || "User",
 
-          setupToken: token,
+    //       setupToken: token,
 
-          isActive: false,
+    //       isActive: false,
 
-          setupExpiry:
-            new Date(
-              Date.now()
-              + 24 * 60 * 60 * 1000
-            )
-        }
-      });
+    //       setupExpiry:
+    //         new Date(
+    //           Date.now()
+    //           + 24 * 60 * 60 * 1000
+    //         )
+    //     }
+    //   });
 
-    await sendInviteEmail(
-      employee.email,
-      employee.name,
-      token
-    );
+    await prisma.user.create({
+                data: {
+                    tenantId,
+                    name: row.Name,
+                    email,
+                    role: row.Role || "User",
+                    passwordHash,
+                    isActive: true,   // active immediately, no setup step needed
+                },
+            });
 
     inserted++;
   }
