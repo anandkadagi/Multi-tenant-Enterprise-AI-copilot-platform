@@ -54,7 +54,7 @@ export default function LoginPage() {
 
                 {error && (
                     <div className="mb-5 rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-2.5 text-sm text-red-300">
-                        {error}
+                        Something went wrong. Please try again
                     </div>
                 )}
 
