@@ -20,6 +20,8 @@ const uploadDocsRoutes=require("./routes/upload_docs/upload_docs.routes")
 
 const listDocs=require("./routes/list_documents/listDocuments.routes")
 
+const registerCompany= require("./routes/registerCompany/register.routes")
+
 const app = express();
 
 app.use(cors());
@@ -39,5 +41,7 @@ app.use("/api/setPassword",authenticate, rbacMiddleware("User"), setPasswordRout
 app.use("/api/query",authenticate,rbacMiddleware("SUPER_ADMIN","TENANT_ADMIN","User"), queryRoutes);
 
 app.use("/api/conversation", authenticate,rbacMiddleware("SUPER_ADMIN","TENANT_ADMIN","User"), conversationRoutes);
+
+app.use("api/pubic/registerCompany" , registerCompany)
 
 module.exports = app;
