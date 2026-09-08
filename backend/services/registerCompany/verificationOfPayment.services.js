@@ -26,10 +26,16 @@ exports.verificationOfPayment=async({ razorpay_order_id, razorpay_payment_id, ra
             throw new Error("This signup has already been completed")
         }
 
-        // create tenant + admin atomically
         const result = await prisma.$transaction(async (tx) => {
+
+            const slug = pending.companyName
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9]+/g, "-")   // replace non-alphanumeric chars with hyphens
+            .replace(/(^-|-$)/g, "");
+
             const tenant = await tx.tenant.create({
-                data: { name: pending.companyName },
+                data: { name: pending.companyName , slug},
             });
 
             const admin = await tx.user.create({
@@ -57,7 +63,7 @@ exports.verificationOfPayment=async({ razorpay_order_id, razorpay_payment_id, ra
             email: result.admin.email,
         });
 
-        return res.json( token );
+        return ( token );
 
     }catch(error){
         throw new Error(error.message || "Error in payment verification");

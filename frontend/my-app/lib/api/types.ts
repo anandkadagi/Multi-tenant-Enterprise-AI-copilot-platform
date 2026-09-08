@@ -60,3 +60,14 @@ export interface DocumentRecord {
     status: string;
     createdAt: string;
 }
+
+export interface SignupInitiateResponse {
+    orderId: string;
+    amount: number;
+    currency: string;
+    keyId: string;
+}
+
+export interface SignupVerifyResponse {
+    token: string;
+}

@@ -42,6 +42,6 @@ app.use("/api/query",authenticate,rbacMiddleware("SUPER_ADMIN","TENANT_ADMIN","U
 
 app.use("/api/conversation", authenticate,rbacMiddleware("SUPER_ADMIN","TENANT_ADMIN","User"), conversationRoutes);
 
-app.use("api/pubic/registerCompany" , registerCompany)
+app.use("/api/public/registerCompany" , registerCompany)
 
 module.exports = app;
