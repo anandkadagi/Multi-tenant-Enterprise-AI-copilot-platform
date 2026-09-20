@@ -31,7 +31,7 @@ exports.verificationOfPayment=async({ razorpay_order_id, razorpay_payment_id, ra
             const slug = pending.companyName
             .toLowerCase()
             .trim()
-            .replace(/[^a-z0-9]+/g, "-")   // replace non-alphanumeric chars with hyphens
+            .replace(/[^a-z0-9]+/g, "-")   
             .replace(/(^-|-$)/g, "");
 
             const tenant = await tx.tenant.create({
@@ -47,6 +47,19 @@ exports.verificationOfPayment=async({ razorpay_order_id, razorpay_payment_id, ra
                     role: "TENANT_ADMIN"
                 },
             });
+
+            const startsAt = new Date();
+            const expiresAt = new Date(startsAt);
+            expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+
+             await tx.subscription.create({
+                data: {
+                    tenantId: tenant.id,
+                    razorpayOrderId: razorpay_order_id,
+                    razorpayPaymentId: razorpay_payment_id,
+                    expiresAt
+                },
+            });     
 
             await tx.pendingSignup.update({
                 where: { id: pending.id },

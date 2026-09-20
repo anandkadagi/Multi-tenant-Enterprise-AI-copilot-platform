@@ -18,7 +18,7 @@ const {
 
 const {sendInviteEmail}=require("../email/email.service")
 
-
+const subscriptionService=require("../subscription/subscription.services")
 
 exports.register_company=async(data)=>{
     try{
@@ -226,7 +226,12 @@ exports.login=async(data)=>{
     if (!valid){
         throw new Error("Invalid password");
     }
-        
+     
+    const state = await subscriptionService.getSubscriptionState(user.tenantId);
+
+    if (!state.valid) {
+        throw new Error("Your company's subscription is inactive. Contact your administrator.");
+    }
 
     const token =
         generateAccessToken(user);

@@ -40,6 +40,18 @@ async function requestForm(path: string, formData: FormData): Promise<Response> 
 }
 
 
+function getUserRole(): string | null {
+    if (typeof window === "undefined") return null;
+    const token = localStorage.getItem("token");
+    if (!token) return null;
+    try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        return payload.role ?? null;
+    } catch {
+        return null;
+    }
+}
+
 async function request(path: string, options: RequestOptions = {}): Promise<Response> {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
@@ -62,6 +74,27 @@ async function request(path: string, options: RequestOptions = {}): Promise<Resp
         }
         throw new ApiError("Unauthorized", 401);
     }
+
+    if (response.status === 402) {
+    const body = await response.json().catch(() => ({}));
+
+    if (typeof window !== "undefined") {
+        const role = getUserRole();
+        localStorage.removeItem("token");
+
+        if (role === "TENANT_ADMIN") {
+            if (!window.location.pathname.startsWith("/subscription")) {
+                window.location.href = "/subscription/renew";
+            }
+        } else {
+            if (!window.location.pathname.startsWith("/login")) {
+                window.location.href = "/login?reason=subscription_expired";
+            }
+        }
+    }
+
+    throw new ApiError(body.message || "Subscription inactive", 402);
+}
 
     if (!response.ok) {
         const errorBody = await response.json().catch(() => ({}));
