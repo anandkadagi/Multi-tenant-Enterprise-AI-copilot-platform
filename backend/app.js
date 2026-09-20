@@ -24,7 +24,7 @@ const listDocs=require("./routes/list_documents/listDocuments.routes")
 
 const registerCompany= require("./routes/registerCompany/register.routes")
 
-const subscriptionStatus=require('./routes/subscription/subscription.routes')
+const subscription=require('./routes/subscription/subscription.routes')
 
 const app = express();
 
@@ -50,6 +50,6 @@ app.use("/api/public/registerCompany" , registerCompany)
 
 // subscription routes
 
-app.use('/api/subscription', authenticate,rbacMiddleware("TENANT_ADMIN","User"), subscriptionStatus)
+app.use('/api/subscription', authenticate,rbacMiddleware("TENANT_ADMIN","User"), subscription)
 
 module.exports = app;

@@ -7,3 +7,5 @@ router.get("/status", subscriptionController.getStatus);
 router.post("/renew", subscriptionController.initiateRenewal);
 
 router.post("/renew/verify", subscriptionController.verifyRenewal);
+
+module.exports = router;  
