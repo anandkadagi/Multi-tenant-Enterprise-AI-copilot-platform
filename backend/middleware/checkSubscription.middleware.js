@@ -1,5 +1,5 @@
 // middlewares/checkSubscription.middleware.js
-const subscriptionService = require("../services/subscription/subscription.service");
+const subscriptionService = require("../services/subscription/subscription.services");
 
 const checkSubscription = async (req, res, next) => {
     try {

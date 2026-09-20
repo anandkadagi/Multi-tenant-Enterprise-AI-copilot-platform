@@ -8,7 +8,7 @@ exports.getStatus = async (req, res) => {
 
         return res.json({
             valid: state.valid,
-            reason: state.reason ?? null,
+            reason: state?.reason ?? null,
             plan: state.subscription?.plan ?? null,
             status: state.subscription?.status ?? null,
             expiresAt: state.subscription?.expiresAt ?? null,
