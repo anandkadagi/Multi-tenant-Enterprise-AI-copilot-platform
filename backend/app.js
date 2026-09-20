@@ -14,6 +14,8 @@ const rbacMiddleware= require("./middleware/rbac.middleware");
 
 const authenticate= require("./middleware/auth.middleware");
 
+const checkSubscription=require("./middleware/checkSubscription.middleware")
+
 const conversationRoutes=require("./routes/conversation_history/conversation.routes")
 
 const uploadDocsRoutes=require("./routes/upload_docs/upload_docs.routes")
@@ -21,6 +23,8 @@ const uploadDocsRoutes=require("./routes/upload_docs/upload_docs.routes")
 const listDocs=require("./routes/list_documents/listDocuments.routes")
 
 const registerCompany= require("./routes/registerCompany/register.routes")
+
+const subscription=require('./routes/subscription/subscription.routes')
 
 const app = express();
 
@@ -30,18 +34,22 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 
-app.use("/api/upload", authenticate, rbacMiddleware("TENANT_ADMIN"), uploadUsersRoutes);
+app.use("/api/upload", authenticate, rbacMiddleware("TENANT_ADMIN"), checkSubscription,uploadUsersRoutes);
 
-app.use("/api/uploadDocs", authenticate, rbacMiddleware("TENANT_ADMIN"), uploadDocsRoutes);
+app.use("/api/uploadDocs", authenticate, rbacMiddleware("TENANT_ADMIN"), checkSubscription,uploadDocsRoutes);
 
-app.use("/api/listDocs",authenticate, rbacMiddleware("TENANT_ADMIN"), listDocs)
+app.use("/api/listDocs",authenticate, rbacMiddleware("TENANT_ADMIN"), checkSubscription,listDocs)
 
-app.use("/api/setPassword",authenticate, rbacMiddleware("User"), setPasswordRoutes);
+app.use("/api/setPassword",authenticate, rbacMiddleware("User"), checkSubscription,setPasswordRoutes);
 
-app.use("/api/query",authenticate,rbacMiddleware("SUPER_ADMIN","TENANT_ADMIN","User"), queryRoutes);
+app.use("/api/query",authenticate,rbacMiddleware("SUPER_ADMIN","TENANT_ADMIN","User"), checkSubscription,queryRoutes);
 
-app.use("/api/conversation", authenticate,rbacMiddleware("SUPER_ADMIN","TENANT_ADMIN","User"), conversationRoutes);
+app.use("/api/conversation", authenticate,rbacMiddleware("SUPER_ADMIN","TENANT_ADMIN","User"), checkSubscription,conversationRoutes);
 
 app.use("/api/public/registerCompany" , registerCompany)
+
+// subscription routes
+
+app.use('/api/subscription', authenticate,rbacMiddleware("TENANT_ADMIN","User"), subscription)
 
 module.exports = app;

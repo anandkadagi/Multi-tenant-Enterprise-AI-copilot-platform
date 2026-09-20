@@ -71,3 +71,23 @@ export interface SignupInitiateResponse {
 export interface SignupVerifyResponse {
     token: string;
 }
+
+export interface SubscriptionStatus {
+    valid: boolean;
+    reason: "expired" | "cancelled" | "no_subscription" | null;
+    plan: string | null;
+    status: string | null;
+    expiresAt: string | null;
+}
+
+export interface RenewalInitiateResponse {
+    orderId: string;
+    amount: number;
+    currency: string;
+    keyId: string;
+}
+
+export interface RenewalVerifyResponse {
+    success: boolean;
+    expiresAt: string;
+}
