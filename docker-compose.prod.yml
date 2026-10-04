@@ -1,0 +1,62 @@
+services:
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    restart: unless-stopped
+    volumes:
+      - qdrant_data:/qdrant/storage
+    expose:
+      - "6333"
+
+  backend:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql://postgres:AnandKadagi@ai-copilot-db.c9o88iqwigix.ap-south-1.rds.amazonaws.com:5432/AI_Copilot
+    depends_on:
+      - postgres
+    expose:
+      - "5000"
+
+  ai-service:
+    build:
+      context: ./AI-services
+    restart: unless-stopped
+    env_file:
+      - ./AI-services/.env
+    environment:
+      QDRANT_HOST: qdrant
+      QDRANT_PORT: "6333"
+    depends_on:
+      - qdrant
+    expose:
+      - "8000"
+
+  frontend:
+    build:
+      context: ./frontend/my-app
+      args:
+        NEXT_PUBLIC_API_URL: 
+    restart: unless-stopped
+    expose:
+      - "3000"
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.config:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+      - frontend  
+
+volumes:
+  postgres_data:
+  qdrant_data:
+
+  
