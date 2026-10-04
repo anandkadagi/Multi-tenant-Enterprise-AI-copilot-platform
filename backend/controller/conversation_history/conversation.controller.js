@@ -23,7 +23,7 @@ exports.sendMessage = async (req, res) => {
 
         const history = await conversationService.getHistory(conversationId, userId, tenantId);
 
-        const response = await axios.post("http://localhost:8000/injection/chat", {
+        const response = await axios.post(`${process.env.FAST_API_URL}/injection/chat`, {
             query,
             tenantId,
             userId,

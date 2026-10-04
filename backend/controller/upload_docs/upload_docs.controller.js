@@ -16,7 +16,7 @@ exports.uploadDocument = async (req, res) => {
         form.append("companyId", tenantId); 
 
         const response = await axios.post(
-            "http://localhost:8000/injection/upload",
+            `${process.env.FAST_API_URL}/injection/upload`,
             form,
             { headers: form.getHeaders() }
         );
