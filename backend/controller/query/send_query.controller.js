@@ -30,7 +30,7 @@ exports.send_query_controller = async (req, res) => {
         }
 
         const response = await axios.post(
-            "http://localhost:8000/injection/chat",
+            `${process.env.FAST_API_URL}/injection/chat`,
             {
                 query,
                 tenantId,
