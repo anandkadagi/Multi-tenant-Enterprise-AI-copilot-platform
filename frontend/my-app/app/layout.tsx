@@ -3,16 +3,30 @@ import { Providers } from "./providers";
 import "./globals.css";
 import Script from "next/script";
 
-const spaceGrotesk = Space_Grotesk({
-    subsets: ["latin"],
-    variable: "--font-display",
-    weight: ["500", "600", "700"],
-});
+// const spaceGrotesk = Space_Grotesk({
+//     subsets: ["latin"],
+//     variable: "--font-display",
+//     weight: ["500", "600", "700"],
+// });
+
+// const inter = Inter({
+//     subsets: ["latin"],
+//     variable: "--font-body",
+//     weight: ["400", "500", "600"],
+// });
 
 const inter = Inter({
-    subsets: ["latin"],
-    variable: "--font-body",
-    weight: ["400", "500", "600"],
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-space-grotesk",
+  display: "swap",
 });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
