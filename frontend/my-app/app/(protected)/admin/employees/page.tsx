@@ -21,7 +21,7 @@ export default function EmployeesPage() {
             formData.append("file", file);
 
             const data = await apiClient.postForm<BulkEmployeeResult>(
-                "/api/upload/bulk_register",
+                "/upload/bulk_register",
                 formData
             );
             setResult(data);

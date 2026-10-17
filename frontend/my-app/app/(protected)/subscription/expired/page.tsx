@@ -28,7 +28,7 @@ export default function RenewSubscriptionPage() {
     useEffect(() => {
         if (user?.role === "TENANT_ADMIN") {
             apiClient
-                .get<SubscriptionStatus>("/api/subscription/status")
+                .get<SubscriptionStatus>("/subscription/status")
                 .then(setStatus)
                 .catch(() => setStatus(null));
         }
@@ -39,7 +39,7 @@ export default function RenewSubscriptionPage() {
         setIsProcessing(true);
 
         try {
-            const order = await apiClient.post<RenewalInitiateResponse>("/api/subscription/renew");
+            const order = await apiClient.post<RenewalInitiateResponse>("/subscription/renew");
 
             const options = {
                 key: order.keyId,
@@ -50,7 +50,7 @@ export default function RenewSubscriptionPage() {
                 description: "Subscription renewal",
                 handler: async (response: any) => {
                     try {
-                        await apiClient.post<RenewalVerifyResponse>("/api/subscription/renew/verify", {
+                        await apiClient.post<RenewalVerifyResponse>("/subscription/renew/verify", {
                             razorpay_order_id: response.razorpay_order_id,
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_signature: response.razorpay_signature,

@@ -41,7 +41,7 @@ services:
     build:
       context: ./frontend/my-app
       args:
-        NEXT_PUBLIC_API_URL: 
+        NEXT_PUBLIC_API_URL: /api
     restart: unless-stopped
     expose:
       - "3000"
