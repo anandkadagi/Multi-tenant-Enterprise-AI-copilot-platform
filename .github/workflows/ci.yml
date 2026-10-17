@@ -49,10 +49,10 @@ jobs:
             context: ./AI-services
             build_args: ""
           - service: frontend
-            context: ./frontend
+            context: ./frontend/my-app
             # NEXT_PUBLIC_* values are baked into the JS at build time
             build_args: |
-              NEXT_PUBLIC_API_URL=/api
+              NEXT_PUBLIC_API_URL=
     steps:
       - uses: actions/checkout@v4
 
