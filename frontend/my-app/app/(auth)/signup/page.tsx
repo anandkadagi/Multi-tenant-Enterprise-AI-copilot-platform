@@ -28,7 +28,7 @@ export default function SignupPage() {
         setIsSubmitting(true);
 
         try {
-            const order = await apiClient.post<SignupInitiateResponse>("/api/public/registerCompany/initiate", {
+            const order = await apiClient.post<SignupInitiateResponse>("/public/registerCompany/initiate", {
                 companyName,
                 adminName,
                 adminEmail,
@@ -45,7 +45,7 @@ export default function SignupPage() {
                 handler: async (response: any) => {
                     try {
                         const result = await apiClient.post<SignupVerifyResponse>(
-                            "/api/public/registerCompany/verify",
+                            "/public/registerCompany/verify",
                             {
                                 razorpay_order_id: response.razorpay_order_id,
                                 razorpay_payment_id: response.razorpay_payment_id,

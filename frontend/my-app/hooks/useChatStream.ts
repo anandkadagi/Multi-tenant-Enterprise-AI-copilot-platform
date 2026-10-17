@@ -17,7 +17,7 @@ export function useChatStream() {
 
     const refreshConversations = useCallback(async () => {
         try {
-            const data = await apiClient.get<{ conversations: ConversationSummary[] }>("/api/conversation/conversations");
+            const data = await apiClient.get<{ conversations: ConversationSummary[] }>("/conversation/conversations");
             setConversations(data.conversations);
         } catch {
             // non-fatal — sidebar just stays empty/stale
@@ -37,7 +37,7 @@ export function useChatStream() {
         setIsLoadingHistory(true);
         setConversationId(id);
         try {
-            const data = await apiClient.get<MessagesResponse>(`/api/conversation/conversations/${id}/messages`);
+            const data = await apiClient.get<MessagesResponse>(`/conversation/conversations/${id}/messages`);
             setMessages(
                 data.messages.map((m) => ({
                     id: nextId(),
@@ -61,7 +61,7 @@ export function useChatStream() {
             const isNewConversation = !activeConversationId;
 
             if (!activeConversationId) {
-                const data = await apiClient.post<ConversationResponse>("/api/conversation/conversations");
+                const data = await apiClient.post<ConversationResponse>("/conversation/conversations");
                 activeConversationId = data.conversationId;
                 setConversationId(activeConversationId);
             }
@@ -77,7 +77,7 @@ export function useChatStream() {
             setIsStreaming(true);
 
             try {
-                const response = await fetch(`${API_URL}/api/conversation/conversations/${activeConversationId}/messages`, {
+                const response = await fetch(`${API_URL}/conversation/conversations/${activeConversationId}/messages`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

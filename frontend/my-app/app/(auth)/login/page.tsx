@@ -17,7 +17,7 @@ export default function LoginPage() {
         setError("");
         setIsSubmitting(true);
         try {
-            const data = await apiClient.post<LoginResponse>("/api/auth/login", { email, password });
+            const data = await apiClient.post<LoginResponse>("/auth/login", { email, password });
             login(data.token);
         } catch (err) {
             setError(err instanceof ApiError ? err.message : "Something went wrong. Try again.");

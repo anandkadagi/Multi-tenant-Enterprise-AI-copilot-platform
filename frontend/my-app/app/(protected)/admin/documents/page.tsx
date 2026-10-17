@@ -16,7 +16,7 @@ export default function DocumentsPage() {
 
     const fetchDocuments = useCallback(async () => {
         try {
-            const data = await apiClient.get<{ documents: DocumentRecord[] }>("/api/listDocs");
+            const data = await apiClient.get<{ documents: DocumentRecord[] }>("/listDocs");
             setDocuments(data.documents);
             console.log(data.documents)
         } catch {
@@ -40,7 +40,7 @@ export default function DocumentsPage() {
             formData.append("file", file);
 
             const data = await apiClient.postForm<DocumentUploadResult>(
-                "/api/uploadDocs",
+                "/uploadDocs",
                 formData
             );
             setResult(data);
