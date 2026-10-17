@@ -52,7 +52,7 @@ jobs:
             context: ./frontend/my-app
             # NEXT_PUBLIC_* values are baked into the JS at build time
             build_args: |
-              NEXT_PUBLIC_API_URL=
+              NEXT_PUBLIC_API_URL=/api
     steps:
       - uses: actions/checkout@v4
 
