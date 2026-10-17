@@ -71,7 +71,7 @@ jobs:
           context: ./frontend/my-app
           push: true
           build-args: |
-            NEXT_PUBLIC_API_URL=
+            NEXT_PUBLIC_API_URL=/api
           tags: |
             ${{ env.IMAGE_PREFIX }}-frontend:${{ env.IMAGE_TAG }}
             ${{ env.IMAGE_PREFIX }}-frontend:latest
