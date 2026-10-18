@@ -1,5 +1,4 @@
 require("dotenv").config();
-console.log("DEBUG raw env:", process.env.DATABASE_URL);
 
 const app = require("./app");
 
