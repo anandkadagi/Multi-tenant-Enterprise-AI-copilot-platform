@@ -65,15 +65,15 @@ jobs:
           cache-from: type=gha,scope=ai-service
           cache-to: type=gha,mode=max,scope=ai-service
 
-      - name: Publish frontend
+      - name: Build and push frontend
         uses: docker/build-push-action@v6
         with:
           context: ./frontend/my-app
           push: true
+          tags: |
+            ghcr.io/anandkadagi/multi-tenant-enterprise-ai-copilot-platform-frontend:${{ github.sha }}
+            ghcr.io/anandkadagi/multi-tenant-enterprise-ai-copilot-platform-frontend:latest
           build-args: |
             NEXT_PUBLIC_API_URL=/api
-          tags: |
-            ${{ env.IMAGE_PREFIX }}-frontend:${{ env.IMAGE_TAG }}
-            ${{ env.IMAGE_PREFIX }}-frontend:latest
           cache-from: type=gha,scope=frontend
           cache-to: type=gha,mode=max,scope=frontend
